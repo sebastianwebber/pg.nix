@@ -37,7 +37,7 @@ in {
     zpool = {
       zdata = {
         type = "zpool";
-        mode = "mirror";
+        mode = "raidz2";
         mountpoint = "/data";
 
         datasets = {

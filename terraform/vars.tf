@@ -13,7 +13,7 @@ variable "db_instance_type" {
 
 variable "db_node_count" {
   type        = number
-  default     = 1
+  default     = 2
   description = "Número total de nós de banco de dados a serem criados."
 }
 

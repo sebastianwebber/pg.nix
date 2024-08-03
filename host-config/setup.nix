@@ -1,8 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 {
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nixpkgs.config.allowUnfree = true;
-  networking.hostId = "bd1b9944";
-
-  system.stateVersion = "unstable";
+  environment.systemPackages = with pkgs; [
+    vim
+    tmux 
+    git
+  ];
 }
