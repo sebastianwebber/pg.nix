@@ -62,11 +62,14 @@
           name = name;
           value = nixpkgs.lib.nixosSystem {
             specialArgs = { meta = { hostname = name; }; };
+
+            system = system;
+
             modules = [
               # Modules
               disko.nixosModules.disko
-              ./disko.nix
-              ./configuration.nix
+              ./host-config/disko.nix
+              ./host-config/configuration.nix
             ];
           };
         }) nodes);
