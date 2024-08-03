@@ -4,15 +4,13 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
-    let
-      targetSystems = with flake-utils.lib.system; [
-        x86_64-linux
-        aarch64-linux
-      ];
-    in flake-utils.lib.eachDefaultSystem (system:
+  outputs = { self, nixpkgs, flake-utils, disko, ... }:
+    flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
 
@@ -28,6 +26,7 @@
           name = "docker.io/pg/test";
           tag = "latest";
         };
+        nodes = [ "db-node-1" ];
       in {
 
         # use the command below to inspect the image:
@@ -58,7 +57,19 @@
           };
         };
 
-        ## nix develop
-        devshell.default = pkgs.mkShell { buildInputs = allPkgs; };
+        ## nixos setup
+        nixosConfigurations = builtins.listToAttrs (map (name: {
+          name = name;
+          value = nixpkgs.lib.nixosSystem {
+            specialArgs = { meta = { hostname = name; }; };
+            modules = [
+              # Modules
+              disko.nixosModules.disko
+              ./disko.nix
+              ./configuration.nix
+            ];
+          };
+        }) nodes);
+
       });
 }
